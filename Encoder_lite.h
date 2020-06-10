@@ -1,44 +1,54 @@
 /*File: Encoder_lite.h
  *
- * Lightweight Arduino library for 2 phase rotary encoder, with push switch.
+ * Arduino library for two phase rotary encoder, with push switch.
  *
- * Author: Dave Harris  (c) 03-June-2020
+ * Author: Dave Harris  (c) 10-June-2020   v1.2
  *
- * Although debounce coded, the cheap encoders are poor and you still
- *  need external RC filters on PIN A and PIN B
+ * This has very simple debounce code. The cheap encoders have lots of bounce
+ * and you definitely need external RC filters on Pin A, Pin B and Pin SW.
+ * Suggest 10k and 10nF low pass filter.
  *
- * This uses one External Interrupt pin, INT0/1 on UNO/NANO, INT0..5 on MEGA.
+ * Coded to need one External Interrupt, INT0/1 on UNO/NANO, INT0..5 on MEGA.
 */
 #ifndef ENCODER_LITE_H_
 #define ENCODER_LITE_H_
 
 #include <Arduino.h>
 
-#define ENC_DEBOUNCE_mS 30
-#define ENC_QUICK_THRESHOLD_mS 50
-#define ENC_STEP_SLOW 1
-#define ENC_STEP_FAST 10
+#define DEBOUNCE_ms 5
+#define FAST_THRESHOLD_ms 35
+#define MAX_POSITION 999U
+#define STEP_FAST 10
 
 
 class Encoder_lite
 {
 public:
 
-	bool begin(uint8_t pinInA = 2, uint8_t pinInB = 3, uint8_t pinInSw = 4);
+  bool begin(byte, byte, byte);	// pinA, pinB, pinSw
 
-	bool pushSwitch(); 	// false = no push, true = push
+  bool position(uint16_t);		// between minPos and maxPos, to set position
 
-	uint8_t position(uint8_t);	// 0-255 to set
-	uint8_t position(void);   	// for read back
+  uint16_t position(void);   	// read current position
 
-	uint8_t maxPosition(uint8_t);	// 0-255 to set max
-	uint8_t maxPosition(void);  	// void for read back
+  bool maxPosition(uint16_t);	// minPos to MAX_POSITION to set maxPos limit
 
-	uint8_t minPosition(uint8_t);	// 0-255 to set min
-	uint8_t minPosition(void);		// void for read back
+  uint16_t maxPosition(void);	// read back maximum position
+
+  bool minPosition(uint16_t);	// MIN_POSITION to maxPos to set minPos limit
+
+  uint16_t minPosition(void);	// Read back minimum position
+
+  void wrapMode(bool = true);	// true:wrap position=limit. false:no wrap
+
+  bool switchState(void); 		// 1 = not pushed, 0 = pushed
+
+  int switchPressed(void); 		// Pressed for duration = 5 to 10000 ms
+								// Not pressed = 0
+								// Still pressed after 10 seconds = -1
 };
 
-void encoderISR(void);
+//static void encoderISR(void);
 
 #endif // ENCODER_LITE_H_
 //----------------------------------------------------------------------EoF----
