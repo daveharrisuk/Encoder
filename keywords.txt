@@ -1,29 +1,25 @@
 #######################################
-# Syntax Coloring Map For Encoder_lite
+# Syntax Coloring Map For Encoder
 #######################################
 
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
 
-Encoder_lite	KEYWORD1
+Encoder	KEYWORD1
+press_t KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-begin		KEYWORD2
-position	KEYWORD2
-maxPosition	KEYWORD2
-minPosition	KEYWORD2
-switchState	KEYWORD2
-switchPressed   KEYWORD2
-wrapMode	KEYWORD2
+begin KEYWORD2
+position KEYWORD2
+limits KEYWORD2
+switchState KEYWORD2
+switchPressed KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
 
-DEBOUNCE_mS	LITERAL1
-QUICK_THRESHOLD_mS	LITERAL1
-STEP_FAST	LITERAL1

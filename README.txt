@@ -1,100 +1,77 @@
-/* Encoder_lite Arduino library
-
-// Lightweight Arduino library for 2 phase rotary encoder, with push switch.
+/* Encoder library
+//
+// Author: Dave Harris (c)  18-Jun-2020  v1.3   Contact:wortingukATgmailDOTcom
+//
+//
+// Arduino library for 2 phase rotary encoder, with push switch.
 //
 // This is interrupt driven and does not need polling.
 // 
-// The cheap encoders are very poor and you need external RC filters.
-// This has simple debounce coded. The cheap encoders have lots of bounce
-// and you definitely need external RC filters on Pin A, Pin B and Pin SW.
-// Suggest 10k and 10nF low pass filter.
-//  
-// This uses one External Interrupt pin.
-//  One of INT0, INT1 on UNO/NANO or INT0..5 on MEGA.
+// Uses 3 pins, phaseA (PinA), phaseB (PinB) and switch (PinSw).
+// Requires Interrupt pins for pinA and pinSw.
+//  Available are INT0, INT1 on UNO/NANO or INT0..5 on MEGA.
 // 
-//
-// Author: Dave Harris  (c) 06-Jun-2020   contact: wortingukATgmailDOTcom
+// The cheap encoders have lots of contact bounce and require external
+// Resistor/Capacitor filters on PinA, PinB and PinSw between encoder and MCU. 
+// Suggest 10k and 10nF low pass. Also each needs a 10k pull up before filter.
+//  
 //
 // Version:
 // 0.0 DH May2020 started
 // 1.0 DH 3-Jun-2020. 
 // 1.1 DH 6-Jun-2020 added wrapMode method and wpu option
 // 1.2 DH 10-Jun-2020 removed wpu option, added switchPressed method
-
+// 1.3 DH 16-Jun-2020 change switchPress to duration measure method
 
 // using the library...
 
-#include <Encoder_lite.h>
+#include <Encoder.h>
 
-Encoder_lite enc;  // Object Instantiation
+Encoder enc;  // class 'Encoder' instantiation as 'enc'
 
 //Methods:
-// begin, position, minPosition, maxPosition, switchState & switchPressed.
+// begin, position, limits, switchState & switchPressed.
 
 
-    enc.begin(PinA, PinB, PinSW);
+    enc.begin(PinA, PinB, PinSw, wrap, pinB_ACW);
 
-//    Sets up the three pins and starts the encoder interrupt on pinA.
-//    The 4 args are the 3 pin numbers being used
+//    Sets up the three pins and starts the interrupts.
+//    The 5 args are pin numbers being used
 //      PinA, Encoder phaseA, it must be an Interrupt (INT) pin.
 //      PinB, Encoder phaseB, a general digital input pin.
-//      PinSW, Encoder push switch contact, a general digital input pin.
-//    Returns true.
+//      PinSw, Encoder push switch, it must be an Interrupt (INT) pin.
+//      wrap: true = wrap position@limit. false = no wrap
+//      pinB_ACW: 1 = ACW high level, 0 = ACW low level
 
 
-ret = enc.position();
+pos = enc.position();   // 0-255
 
-//    Returns the current encoder position.  minPos to maxPos
+// returns the current encoder position. Between minPos to maxPos
 
 
-ret = enc.position(value);   // minPos to maxPos, default to 32.
+  enc.position(pos);   // 0-255 ... from minPos to maxPos.
 
-//    Resets the current encoder postion value.
-//    If the value is outside of minPos and maxPos, then no change is made.
-//    Returns position change success or fail.
+// Resets the current encoder postion value.
 
+
+  enc.limits(minPos, maxPos);  // 0-254, 1-255
   
-ret = enc.minPosition();
-
-//    Returns the current minimum position limit. 0-998
-
-
-ret = enc.minPosition(value);  // 0-998, default=0.
-
-//    Sets the minimum position limit.
-//    If value is above maxPos minus 1, then no change is made. 
-//    If current position is below new minPos, then is set to minPos.
-//    Returns change success or fail.
+// sets the position limits. If min > max, does nothing
+// If pos is outside of min/max, then pos is reset inside limits
 
 
-ret = enc.maxPosition();
-
-//    Returns the current maximum position limit. 1-999
-
-
-ret = enc.maxPosition(value);  // 1-999, default=999.
-
-//    Sets the maximum position limit, maxPos.
-//    If value is below minPos plus 1, then no change is made.
-//    If current position is above maxPos, then is set to maxPos.
-//    Returns change success or fail.
-
-
-   enc.wrapMode(bit);  // True= wrapMode on. False= wrapMode off.
-
-
-ret = enc.switchState();  // 0 = pressed, 1 = not pressed
+state = enc.switchState();  // 0 = pressed, 1 = not pressed
 
 // returns the push switch state
 
 
-duration = enc.switchPressed();  // duration ms Pressed
+state = enc.switchPressed();  // duration measure method
  
-// Not pressed returns 0
-// Pressed, after release, returns duration ms
-// Still pressed after 10 seconds returns -1 (stuck?)
+// returns enum PRESS_NONE, PRESS_SHORT (<700ms), PRESS_LONG (>700ms),
+//                  PRESS_TIMEOUT (pressed > 5 seconds)
 
-// See examples/test_Encoder_lite.INO
+
+// See examples/test_Encoder.INO
 
 //--------------------------------------EoF---------------------------------
 */
